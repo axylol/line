@@ -1,0 +1,49 @@
+name: Build
+on:
+  workflow_dispatch:
+  push:
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install MSYS2
+        run: |
+          echo "Downloading 7zip"
+          Invoke-WebRequest "https://7-zip.org/a/7z2408-x64.exe" -OutFile "7z2408-x64.exe"
+
+          echo "Installing 7zip"
+          Start-Process -FilePath "7z2408-x64.exe" -Args "/S" -Verb RunAs -Wait
+
+          echo "Downloading msys32"
+          Invoke-WebRequest "https://repo.msys2.org/distrib/i686/msys2-base-i686-20210705.tar.xz" -OutFile "msys2-base-i686-20210705.tar.xz"
+          
+          echo "Extracting msys32"
+          7z x "msys2-base-i686-20210705.tar.xz" -so | 7z x -aoa -si -ttar -o"C:\"
+      - name: Build
+        run: |
+          # from https://www.msys2.org/docs/ci/
+
+          # Run for the first time
+          C:\msys32\usr\bin\bash -lc ' '
+          # Update MSYS2
+          C:\msys32\usr\bin\bash -lc 'pacman --noconfirm -Syuu'  # Core update (in case any core packages are outdated)
+          C:\msys32\usr\bin\bash -lc 'pacman --noconfirm -Syuu'  # Normal update
+
+          $env:CHERE_INVOKING = 'yes'  # Preserve the current working directory
+          $env:MSYSTEM = 'MSYS'  # Start a MSYS environment
+
+          # Install packages
+          C:\msys32\usr\bin\bash -lc 'pacman --noconfirm --needed -S base-devel msys2-devel cmake ninja'
+
+          # Rebase
+          C:\msys32\usr\bin\bash -lc 'rebaseall -p'
+
+          # Compile
+          C:\msys32\usr\bin\bash -lc './scripts/ci.sh'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: line
+          path: dist/
+          retention-days: 1
