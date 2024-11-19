@@ -46,4 +46,4 @@ jobs:
         with:
           name: line
           path: dist/
-          retention-days: 1
+          retention-days: 7

@@ -31,14 +31,14 @@ void Module::Parse(uint8_t *data, size_t data_size)
         return;
     }
 
-    std::string dump_file_name = "dump/" + std::string(this->name) + ".txt";
+    /*std::string dump_file_name = "dump/" + std::string(this->name) + ".txt";
     std::ofstream dump_file(dump_file_name);
 
     dump::header(dump_file, reader);
     dump::header(dump_file, reader);
     dump::section_headers(dump_file, reader);
     dump::segment_headers(dump_file, reader);
-    dump::symbol_tables(dump_file, reader);
+    dump::symbol_tables(dump_file, reader);*/
 
     this->is_shared_lib = reader.get_type() == ET_DYN;
 

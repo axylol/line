@@ -36,11 +36,12 @@ bool isPathWhitelisted(const char *path)
 }
 
 void fixPathIfNeeded(char* out, const char* path) {
-    if (strstr(path, "/tmp/")) {
+    // if it starts with /tmp/ then replace it to ./tmp/
+    if (strstr(path, "/tmp/") == path) {
         snprintf(out, PATH_MAX, ".%s", path);
-    } else {
-        snprintf(out, PATH_MAX, "%s", path);
+        return;
     }
+    snprintf(out, PATH_MAX, "%s", path);
 }
 
 void InitPathWhitelist()

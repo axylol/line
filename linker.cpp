@@ -37,6 +37,7 @@ Module *Linker::AddModuleFromFile(const char *file_name)
     std::vector<std::string> paths = {};
     paths.push_back(file_name);
 
+    // :sob:
     char *LINE_LIBRARY_PATH = getenv("LINE_LIBRARY_PATH");
     if (LINE_LIBRARY_PATH)
     {
@@ -201,6 +202,8 @@ void Linker::RelocateAll()
         }
     };
 
+    // idk if this is the right way to do these, but it works
+
     for (size_t i = 0; i < this->modules.size(); i++)
     {
         do_relocation(this->modules[i], ELFIO::R_386_RELATIVE);
@@ -238,6 +241,8 @@ SymbolResolver Linker::LookupGlobalSymbol(const char *name, uintptr_t isnt)
     address = ResolveStub(name);
     if (address)
         return SymbolResolver(address, ELFIO::STB_GLOBAL);
+
+    // i kinda dont know what im doing
 
     SymbolResolver weak_result = SymbolResolver();
     for (size_t i = 0; i < this->modules.size(); i++)

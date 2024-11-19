@@ -1,7 +1,9 @@
 # line
 
+shitty elf loader
+
 # Building
-Requires msys2 32-bit
+Requires msys2 32bit
 
 ### Configure
 ```sh

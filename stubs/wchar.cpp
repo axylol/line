@@ -1,6 +1,9 @@
 #include "wchar.h"
 #include <stdlib.h>
 
+// Windows wchar_t is 2 bytes and linux is 4 bytes, so we should implement
+// our own function that uses 4 byte wchar_t (int) instead
+
 size_t jmp_wcslen(const linux_wchar_t *s)
 {
     size_t i = 0;
@@ -84,8 +87,6 @@ linux_wchar_t *jmp_wmemmove(linux_wchar_t *d, const linux_wchar_t *s, size_t n)
 Stubs GetWcharStubs()
 {
     return {
-        // Windows wchar_t is 2 bytes and linux is 4 bytes, so we should implement
-        // our own function that uses 4 byte wchar_t (int) instead
         DEF_STUB(wcslen),
         DEF_STUB(wmemcpy),
         DEF_STUB(wcscmp),

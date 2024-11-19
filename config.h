@@ -5,14 +5,13 @@
 
 #define MEMORY_ALIGN 0x1000
 
+// FIXME: this is a hacky fix for mt4
 #define CUSTOM_STACK
-// 16 MB
 #define CUSTOM_STACK_SIZE 16777216
 
 // Shit slow epoll implementation
 #define SHIT_EPOLL
 
-// mt3dx+ needs these
 #define MUTEX_CHECK
 
 // enable dlopen implemntation
@@ -24,5 +23,5 @@
 // Debug
 #define SOCKET_DEBUG
 
-// BETA: Redirects /tmp to a folder in local directory, useful for 3dx+
+// Redirects /tmp to a folder in local directory, useful for 3dx+
 #define ENV_REDIRECTION
