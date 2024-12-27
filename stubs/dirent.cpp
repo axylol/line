@@ -21,7 +21,7 @@ typedef int32_t linux_nlink_t;
 typedef int32_t linux_uid_t;
 typedef int32_t linux_gid_t;
 
-#pragma push(pack, 1)
+#pragma pack(push, 1)
 struct linux_dirent
 {
     linux_ino_t d_ino;
@@ -31,7 +31,7 @@ struct linux_dirent
     char d_name[256];
     char pad[1];
 };
-#pragma pop(pack)
+#pragma pack(pop)
 
 static_assert(sizeof(linux_dirent) == 268, "size mismatch");
 

@@ -57,14 +57,14 @@ int pollMsysToLinuxEvents(int e)
     return events;
 }
 
-#pragma push(pack, 1)
+#pragma pack(push, 1)
 struct linux_pollfd
 {
     int fd;        /* file descriptor */
     short events;  /* requested events */
     short revents; /* returned events */
 };
-#pragma pop(pack)
+#pragma pack(pop)
 
 int jmp_poll(struct linux_pollfd *fds, nfds_t nfds, int timeout)
 {

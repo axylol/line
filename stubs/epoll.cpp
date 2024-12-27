@@ -14,13 +14,13 @@
 #define LINUX_EPOLL_CTL_DEL 2
 #define LINUX_EPOLL_CTL_MOD 3
 
-#pragma push(pack, 1)
+#pragma pack(push, 1)
 struct linux_epoll_event
 {
     uint32_t events;
     char data[8];
 };
-#pragma pop(pack)
+#pragma pack(pop)
 
 static_assert(sizeof(linux_epoll_event) == 12, "size mismatch");
 

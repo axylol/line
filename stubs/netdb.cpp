@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include "../config.h"
 
-#pragma push(pack, 1)
+#pragma pack(push, 1)
 struct linux_addrinfo
 {
     int ai_flags;
@@ -35,7 +35,7 @@ struct linux_servent
     char *s_proto;    /* protocol to use */
 };
 
-#pragma pop(pack)
+#pragma pack(pop)
 
 static_assert(sizeof(linux_addrinfo) == 32, "size mismatch");
 static_assert(sizeof(struct linux_hostent) == 20, "size mismatch");
@@ -63,7 +63,7 @@ int jmp_getaddrinfo(const char *node, const char *service, const struct linux_ad
     printf("getaddrinfo node=%s service=%s\n", node ? node : "null", service ? service : "null");
 #endif
 
-    struct linux_addrinfo *res_temp;
+    struct linux_addrinfo *res_temp = NULL;
 
     int ret = getaddrinfo(node, service, NULL /*(struct addrinfo*)hints*/, (struct addrinfo **)&res_temp);
     if (ret < 0)
@@ -72,10 +72,16 @@ int jmp_getaddrinfo(const char *node, const char *service, const struct linux_ad
         return -1;
     }
 
-    translate_addrinfo_to_msys((struct addrinfo *)res_temp);
+    if (res_temp) {
+        translate_addrinfo_to_msys((struct addrinfo *)res_temp);
 
-    if (res)
-        *res = res_temp;
+        if (res)
+            *res = res_temp;
+    } else { // sometimes cygwin seems to return null addrinfo when theres no host?, hacky
+        printf("getaddrinfo has no value?\n");
+        errno = EAI_NONAME;
+        return -1;
+    }
 
     return ret;
 }

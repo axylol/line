@@ -14,12 +14,12 @@
 #define LINUX_FD_ELT(d) ((d) / LINUX_NFDBITS)
 #define LINUX_FD_MASK(d) ((__fd_mask)(1UL << ((d) % LINUX_NFDBITS)))
 
-#pragma push(pack, 1)
+#pragma pack(push, 1)
 struct linux_fd_set
 {
     long int __fds_bits[LINUX_FD_SETSIZE / LINUX_NFDBITS];
 };
-#pragma pop(pack)
+#pragma pack(pop)
 
 static_assert(sizeof(linux_fd_set) == 128, "size mismatch");
 

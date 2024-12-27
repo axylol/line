@@ -7,7 +7,7 @@
 #include "../config.h"
 #include "../whitelist.h"
 
-#pragma push(pack, 1)
+#pragma pack(push, 1)
 struct linux_stat
 {
     unsigned long st_dev; // 0
@@ -53,7 +53,7 @@ struct linux_stat64
     unsigned long st_ino; // 88
     char pad3[4];
 };
-#pragma pop(pack)
+#pragma pack(pop)
 
 static_assert(sizeof(struct linux_stat) == 88, "size mismatch");
 static_assert(sizeof(struct linux_stat64) == 96, "size mismatch");

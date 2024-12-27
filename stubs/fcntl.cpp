@@ -78,7 +78,7 @@ int convertMsysToLinuxFlags(int arg)
     return flags;
 }
 
-#pragma push(pack, 1)
+#pragma pack(push, 1)
 struct linux_flock
 {
     short l_type;
@@ -98,7 +98,7 @@ struct linux_flock64
     long l_len_high;
     int l_pid;
 };
-#pragma pop(pack)
+#pragma pack(pop)
 
 static_assert(sizeof(struct linux_flock) == 16, "size mismatch");
 static_assert(sizeof(struct linux_flock64) == 24, "size mismatch");
