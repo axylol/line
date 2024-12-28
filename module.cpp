@@ -174,6 +174,14 @@ void Module::Parse(uint8_t *data, size_t data_size)
                     this->init_virtual_address = dynamic_value;
                     break;
                 }
+                case DT_INIT_ARRAY: {
+                    this->init_array_virtual_address = dynamic_value;
+                    break;
+                }
+                case DT_INIT_ARRAYSZ: {
+                    this->init_array_size = dynamic_value;
+                    break;
+                }
                 }
 
                 // printf("[%s] add module import %s\n", this->name, dynamic_name.c_str());
@@ -281,8 +289,22 @@ void Module::CallInit(size_t args, void *argp, void *param)
     // printf("base=%p\n init address = %p\nPress enter to execute init\n", this->base_address, this->base_address + this->init_virtual_address);
     // std::cin.get();
 
+    
     using EntryFunc = int (*)();
-    ((EntryFunc)(this->base_address + this->init_virtual_address))();
+    if (this->init_virtual_address != 0)
+        ((EntryFunc)(this->base_address + this->init_virtual_address))();
+
+    if (this->init_array_virtual_address != 0) {
+        printf("[Module][%s] init array size=%d\n", this->name, this->init_array_size);
+
+        int size = this->init_array_size / sizeof(uintptr_t);
+        uintptr_t init_array = this->base_address + this->init_array_virtual_address;
+        for (int i = 0; i < size; i++) {
+            uintptr_t init_address = *(uintptr_t*)init_array;
+            ((EntryFunc)init_address)();
+            init_array += sizeof(uintptr_t);
+        }
+    }
 }
 
 void Module::CallEntry()

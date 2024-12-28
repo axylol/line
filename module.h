@@ -36,9 +36,12 @@ private:
     uintptr_t real_base_address = UINTPTR_MAX;
 
     bool is_shared_lib = false;
-    uintptr_t init_virtual_address;
+    uintptr_t init_virtual_address = 0;
 
-    uintptr_t entry_address;
+    uintptr_t entry_address = 0;
+
+    uintptr_t init_array_virtual_address = 0;
+    uintptr_t init_array_size = 0;
 
     uintptr_t load_address = UINTPTR_MAX;
     uint32_t load_size;
