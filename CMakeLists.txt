@@ -13,6 +13,7 @@ add_executable(line
     module.cpp 
     stubs.cpp
     plugin.cpp
+    tls.cpp
     whitelist.cpp
     windows.cpp
 
