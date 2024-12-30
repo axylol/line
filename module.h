@@ -43,6 +43,10 @@ private:
     uintptr_t init_array_virtual_address = 0;
     uintptr_t init_array_size = 0;
 
+    uintptr_t fde_table_address = 0;
+    
+    uintptr_t text_address = 0;
+
     uintptr_t load_address = UINTPTR_MAX;
     uint32_t load_size;
 
@@ -92,6 +96,8 @@ public:
 
     void MemoryPatch(uintptr_t dst, uintptr_t src, size_t length);
     void MemorySet(uintptr_t dst, uint8_t val, size_t length);
+
+    void RegisterFrames();
 
     SymbolResolver LookupSymbol(Symbol* symbol);
     SymbolResolver LookupSymbol(const char* name);

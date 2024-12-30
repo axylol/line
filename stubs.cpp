@@ -31,6 +31,7 @@
 std::unordered_map<const char *, void *> STUB_FUNCS = {};
 
 void *MSYS_DLL = NULL;
+void *GCC_S_DLL = NULL;
 
 uintptr_t ResolveMsys(const char *name)
 {
@@ -41,8 +42,19 @@ uintptr_t ResolveMsys(const char *name)
 }
 
 uintptr_t
+ResolveGccS(const char *name)
+{
+    uintptr_t address = (uintptr_t)dlsym(GCC_S_DLL, name);
+    if (address)
+        return address;
+    return 0;
+}
+
+uintptr_t
 ResolveStub(const char *name)
 {
+    if (strstr(name, "_Unwind") == name) // im kinda lazy
+        return ResolveGccS(name);
     for (auto &it : STUB_FUNCS)
     {
         if (strcmp(it.first, name) == 0)
@@ -65,6 +77,10 @@ void StubsInit()
     MSYS_DLL = WindowsLoadLibraryA("msys-2.0.dll");
     if (!MSYS_DLL)
         printf("[Stubs] Error loading msys-2.0.dll\n");
+    
+    GCC_S_DLL = WindowsLoadLibraryA("msys-gcc_s-1.dll");
+    if (!GCC_S_DLL)
+        printf("[Stubs] Error loading msys-gcc_s-1.dll\n");
 
     ADD_STUBS(GetDirentStubs());
     ADD_STUBS(GetDlfcnStubs());

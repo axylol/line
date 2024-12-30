@@ -77,6 +77,9 @@ void Linker::Start()
     printf("[Linker] Doing relocation\n");
 
     this->RelocateAll();
+    
+    for (size_t i = 0; i < this->modules.size(); i++)
+        this->modules[i]->RegisterFrames();
 
     for (size_t i = 0; i < this->modules.size(); i++)
     {

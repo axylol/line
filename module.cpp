@@ -7,6 +7,7 @@
 #include "linker.h"
 #include <elfio/elfio_dump.hpp>
 #include "windows.h"
+#include <dlfcn.h>
 
 Module::Module(uint8_t *data, size_t data_size, const char *name)
 {
@@ -14,6 +15,15 @@ Module::Module(uint8_t *data, size_t data_size, const char *name)
     strcpy(this->path, name);
 
     this->Parse(data, data_size);
+}
+
+void (__cdecl* real___register_frame_info_bases)(const void *begin, void *ob, void *tbase, void *dbase) = 0;
+void __register_frame_info_bases (const void *begin, void *ob, void *tbase, void *dbase) {
+    if (!real___register_frame_info_bases) {
+        void* gcc_s = dlopen("msys-gcc_s-1.dll", RTLD_DEFAULT);
+        *(void**)&real___register_frame_info_bases = dlsym(gcc_s, "__register_frame_info_bases");
+    }
+    real___register_frame_info_bases(begin, ob, tbase, dbase);
 }
 
 void Module::Parse(uint8_t *data, size_t data_size)
@@ -143,10 +153,21 @@ void Module::Parse(uint8_t *data, size_t data_size)
         auto sec = reader.sections[z];
 
         std::string section_name = sec->get_name();
-        // printf("[%s] section %s, type=%d\n", this->name, section_name.c_str(), sec->get_type());
+        printf("[%s] section %s, type=%d\n", this->name, section_name.c_str(), sec->get_type());
 
         switch (sec->get_type())
         {
+        case SHT_PROGBITS: {
+            if (section_name == ".eh_frame") {
+                uint32_t cie_header_length = *(uint32_t*)sec->get_data();
+                this->fde_table_address = sec->get_address() + sizeof(cie_header_length) + cie_header_length;
+            }
+
+            // TODO: fix this
+            if (section_name == ".text")
+                this->text_address = sec->get_address();
+            break;
+        }
         case SHT_DYNAMIC:
         {
             // printf("[%s] dynamic\n", this->name);
@@ -338,6 +359,15 @@ void Module::MemorySet(uintptr_t dst, uint8_t val, size_t length)
         throw 1;
     }
     memset((void *)dst, val, length);
+}
+
+void Module::RegisterFrames() {
+    if (this->fde_table_address != 0) {
+        printf("[Module][%s] fde table address = %" PRIxPTR " text = %" PRIxPTR "\n", this->name, this->base_address + this->fde_table_address, this->base_address + this->text_address);
+        
+        void* obj = malloc(24);
+        __register_frame_info_bases((void*)(this->base_address + this->fde_table_address), obj, (void*)(this->base_address + this->text_address), (void*)0);
+    }
 }
 
 SymbolResolver Module::LookupSymbol(Symbol *symbol)

@@ -67,16 +67,6 @@ long jmp___wcstol_internal(const linux_wchar_t *nptr, linux_wchar_t **endptr, in
     return 0;
 }
 
-void jmp__Unwind_RaiseException()
-{
-    printf("_Unwind_RaiseException stub\n");
-}
-
-void jmp__Unwind_Resume()
-{
-    printf("_Unwind_Resume stub\n");
-}
-
 void jmp__cxa_finalize()
 {
     printf("_cxa_finalize stub\n");
@@ -372,8 +362,6 @@ Stubs GetLibcStubs()
 
         DEF_STUB(__wcstol_internal),
 
-        DEF_STUB(_Unwind_RaiseException),
-        DEF_STUB(_Unwind_Resume),
         DEF_STUB(_cxa_finalize),
         DEF_STUB(__assert_fail),
 
