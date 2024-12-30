@@ -7,7 +7,7 @@
 
 // FIXME: this is a hacky fix for mt4
 #define CUSTOM_STACK
-#define CUSTOM_STACK_SIZE 16777216
+#define CUSTOM_STACK_SIZE 4194304
 
 // Shit slow epoll implementation
 #define SHIT_EPOLL
