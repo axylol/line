@@ -11,6 +11,7 @@
 #include <signal.h>
 #include <setjmp.h>
 #include <sys/mman.h>
+#include "../tls.h"
 
 int __libc_single_threaded = 0;
 
@@ -259,10 +260,16 @@ _sig_func_ptr jmp___sysv_signal(int signum, _sig_func_ptr handler)
     return SIG_ERR;
 }
 
-void *jmp____tls_get_addr(void *a1)
+struct tls_index
+{
+    unsigned long int ti_module;
+    unsigned long int ti_offset;
+};
+
+void *jmp____tls_get_addr(tls_index *ti)
 {
     printf("___tls_get_addr stub called\n");
-    return NULL;
+    return TlsGetAddr(ti->ti_module, ti->ti_offset);
 }
 
 int jmp_syscall(int code, ...)
