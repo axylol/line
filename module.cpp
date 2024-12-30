@@ -20,7 +20,7 @@ Module::Module(uint8_t *data, size_t data_size, const char *name)
 void (__cdecl* real___register_frame_info_bases)(const void *begin, void *ob, void *tbase, void *dbase) = 0;
 void __register_frame_info_bases (const void *begin, void *ob, void *tbase, void *dbase) {
     if (!real___register_frame_info_bases) {
-        void* gcc_s = dlopen("msys-gcc_s-1.dll", RTLD_DEFAULT);
+        void* gcc_s = dlopen("msys-gcc_s-1.dll", 0);
         *(void**)&real___register_frame_info_bases = dlsym(gcc_s, "__register_frame_info_bases");
     }
     real___register_frame_info_bases(begin, ob, tbase, dbase);
