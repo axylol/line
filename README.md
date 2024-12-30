@@ -18,3 +18,7 @@ cmake -G Ninja .. -DCMAKE_BUILD_TYPE=Release
 ```sh
 cmake --build .
 ```
+
+## Special Thanks
+- BroGamer for exception handling support
+- doomer for mental support & testing
