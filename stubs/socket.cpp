@@ -134,8 +134,15 @@ int jmp_setsockopt(int socket, int level, int option_name,
     }
 
     int ret = setsockopt(socket, lvl, opt_name, option_value, option_len);
-    if (ret < 0)
+    if (ret < 0) {
         printf("setsockopt error socket=%d level=%d optname=%d, errno=%d\n", socket, level, option_name, errno);
+
+        // just act like its successful
+        if (lvl == IPPROTO_TCP && opt_name == SO_KEEPALIVE && errno == EINVAL) {
+            errno = 0;
+            return 0;
+        }
+    }
     return ret;
 }
 
