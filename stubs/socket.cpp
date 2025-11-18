@@ -76,7 +76,8 @@ std::unordered_map<int, std::unordered_map<int, int>> SOCK_OPTS = {
          {21, 4101},
      }},
     {6,
-     {{1, TCP_NODELAY}}}};
+     {{LEVEL_TRANSLATE, IPPROTO_TCP},
+      {1, TCP_NODELAY}}}};
 
 int translateSockOpt(int *level, int *option_name)
 {
@@ -134,11 +135,14 @@ int jmp_setsockopt(int socket, int level, int option_name,
     }
 
     int ret = setsockopt(socket, lvl, opt_name, option_value, option_len);
-    if (ret < 0) {
+    if (ret < 0)
+    {
         printf("setsockopt error socket=%d level=%d optname=%d, errno=%d\n", socket, level, option_name, errno);
 
         // just act like its successful
-        if (lvl == IPPROTO_TCP && opt_name == SO_KEEPALIVE && errno == EINVAL) {
+        // maybe it doesnt like changing TCP_NODELAY while its connecting?
+        if (lvl == IPPROTO_TCP && opt_name == TCP_NODELAY && errno == EINVAL)
+        {
             errno = 0;
             return 0;
         }
